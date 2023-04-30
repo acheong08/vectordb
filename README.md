@@ -1,5 +1,10 @@
 # semantic-search-go
 
+## Installation
+```bash
+go get github.com/acheong08/semantic-search-go
+```
+
 ## Example usage
 Simple:
 ```go
