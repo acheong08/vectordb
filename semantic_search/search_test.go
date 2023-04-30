@@ -60,9 +60,6 @@ func TestSemanticSearch(t *testing.T) {
 		{0, 1, 0},
 		{0, 0, 1},
 	}
-
-	queryChunkSize := 1
-	corpusChunkSize := 2
 	topK := 2
 
 	expectedResult := [][]typings.SearchResult{
@@ -74,7 +71,7 @@ func TestSemanticSearch(t *testing.T) {
 			{CorpusID: 0, Score: 0},
 		},
 	}
-	actualResult := semantic_search.SemanticSearch(queryEmbeddings, corpusEmbeddings, queryChunkSize, corpusChunkSize, topK)
+	actualResult := semantic_search.SemanticSearch(queryEmbeddings, corpusEmbeddings, topK)
 
 	// Convert both to JSON string
 	expectedJSON, _ := json.Marshal(expectedResult)

@@ -40,7 +40,11 @@ func CosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 	return cosScores
 }
 
-func SemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, queryChunkSize, corpusChunkSize, topK int) [][]typings.SearchResult {
+func SemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typings.SearchResult {
+	// Defaults
+	queryChunkSize := 1
+	corpusChunkSize := 1
+
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 
 	for queryStartIdx := 0; queryStartIdx < len(queryEmbeddings); queryStartIdx += queryChunkSize {
