@@ -41,10 +41,15 @@ func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 }
 
 func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typings.SearchResult {
-	// Defaults
-	queryChunkSize := 1
-	corpusChunkSize := 1
+	queryChunkSize := len(queryEmbeddings)
+	corpusChunkSize := len(corpusEmbeddings)
 
+	if corpusChunkSize > 1000 {
+		corpusChunkSize = 1000
+	}
+	if queryChunkSize > 10 {
+		queryChunkSize = 10
+	}
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 
 	for queryStartIdx := 0; queryStartIdx < len(queryEmbeddings); queryStartIdx += queryChunkSize {
