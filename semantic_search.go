@@ -6,13 +6,13 @@ import (
 	"github.com/acheong08/semantic-search-go/vectors"
 )
 
-func SemanticSearch(query []string, corpus []string, results int) ([]typings.SearchResult, error) {
+func SemanticSearch(query []string, corpus []string, results int) ([][]typings.SearchResult, error) {
 	// Encode the corpus
 	var encodedCorpus typings.Tensor = make(typings.Tensor, len(corpus))
 	for i, text := range corpus {
 		vector, err := vectors.Encode(text)
 		if err != nil {
-			return []typings.SearchResult{}, err
+			return [][]typings.SearchResult{}, err
 		}
 		// Convert vector from []float64 to [][]float64
 		encodedCorpus[i] = vector
@@ -21,12 +21,12 @@ func SemanticSearch(query []string, corpus []string, results int) ([]typings.Sea
 	for i, text := range query {
 		vector, err := vectors.Encode(text)
 		if err != nil {
-			return []typings.SearchResult{}, err
+			return [][]typings.SearchResult{}, err
 		}
 		// Convert vector from []float64 to [][]float64
 		encodedQuery[i] = vector
 	}
 	// Semantic search
 	searchResult := rank.Rank(encodedQuery, encodedCorpus, results)
-	return searchResult[0], nil
+	return searchResult, nil
 }
