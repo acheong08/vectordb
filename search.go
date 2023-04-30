@@ -4,16 +4,9 @@ import (
 	"container/heap"
 	"math"
 	"sort"
+
+	"github.com/acheong08/semantic-search-go/typings"
 )
-
-type Tensor [][]float64
-
-type Callable func(Tensor, Tensor) Tensor
-
-type SearchResult struct {
-	CorpusID int
-	Score    float64
-}
 
 func DotProduct(a, b []float64) float64 {
 	result := 0.0
@@ -31,10 +24,10 @@ func Norm(a []float64) float64 {
 	return math.Sqrt(result)
 }
 
-func CosSim(queryEmbeddings, corpusEmbeddings Tensor) Tensor {
+func CosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 	numQueries := len(queryEmbeddings)
 	numCorpus := len(corpusEmbeddings)
-	cosScores := make(Tensor, numQueries)
+	cosScores := make(typings.Tensor, numQueries)
 
 	for i := 0; i < numQueries; i++ {
 		cosScores[i] = make([]float64, numCorpus)
@@ -47,31 +40,8 @@ func CosSim(queryEmbeddings, corpusEmbeddings Tensor) Tensor {
 	return cosScores
 }
 
-type SearchResultHeap []SearchResult
-
-func (h SearchResultHeap) Len() int           { return len(h) }
-func (h SearchResultHeap) Less(i, j int) bool { return h[i].Score < h[j].Score }
-func (h SearchResultHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-
-func (h *SearchResultHeap) Push(x interface{}) {
-	*h = append(*h, x.(SearchResult))
-}
-
-func (h *SearchResultHeap) Pop() interface{} {
-	old := *h
-	n := len(old)
-	item := old[n-1]
-	*h = old[0 : n-1]
-	return item
-}
-
-// Peek returns the smallest element from the SearchResultHeap without removing it.
-func (h SearchResultHeap) Peek() SearchResult {
-	return h[0]
-}
-
-func SemanticSearch(queryEmbeddings, corpusEmbeddings Tensor, queryChunkSize, corpusChunkSize, topK int) [][]SearchResult {
-	queriesResultList := make([][]SearchResult, len(queryEmbeddings))
+func SemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, queryChunkSize, corpusChunkSize, topK int) [][]typings.SearchResult {
+	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 
 	for queryStartIdx := 0; queryStartIdx < len(queryEmbeddings); queryStartIdx += queryChunkSize {
 		for corpusStartIdx := 0; corpusStartIdx < len(corpusEmbeddings); corpusStartIdx += corpusChunkSize {
@@ -88,21 +58,21 @@ func SemanticSearch(queryEmbeddings, corpusEmbeddings Tensor, queryChunkSize, co
 			cosScores := CosSim(queryEmbeddings[queryStartIdx:queryEndIdx], corpusEmbeddings[corpusStartIdx:corpusEndIdx])
 
 			for queryItr := 0; queryItr < len(cosScores); queryItr++ {
-				pq := &SearchResultHeap{}
+				pq := &typings.SearchResultHeap{}
 				heap.Init(pq)
 
 				for i := 0; i < len(cosScores[queryItr]); i++ {
 					if pq.Len() < topK {
-						heap.Push(pq, SearchResult{CorpusID: i, Score: cosScores[queryItr][i]})
+						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: cosScores[queryItr][i]})
 					} else if cosScores[queryItr][i] > pq.Peek().Score {
 						heap.Pop(pq)
-						heap.Push(pq, SearchResult{CorpusID: i, Score: cosScores[queryItr][i]})
+						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: cosScores[queryItr][i]})
 					}
 				}
 
 				queryID := queryStartIdx + queryItr
 				for pq.Len() > 0 {
-					result := heap.Pop(pq).(SearchResult)
+					result := heap.Pop(pq).(typings.SearchResult)
 					result.CorpusID += corpusStartIdx
 					queriesResultList[queryID] = append(queriesResultList[queryID], result)
 				}

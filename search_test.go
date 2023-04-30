@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	vectors "github.com/acheong08/semantic-search-go"
+	"github.com/acheong08/semantic-search-go/typings"
 
 	assert "github.com/stretchr/testify/assert"
 )
@@ -30,17 +31,17 @@ func TestNorm(t *testing.T) {
 }
 
 func TestCosSim(t *testing.T) {
-	queryEmbeddings := vectors.Tensor{
+	queryEmbeddings := typings.Tensor{
 		{1, 0, 0},
 		{0, 1, 0},
 	}
-	corpusEmbeddings := vectors.Tensor{
+	corpusEmbeddings := typings.Tensor{
 		{1, 0, 0},
 		{0, 1, 0},
 		{0, 0, 1},
 	}
 
-	expectedResult := vectors.Tensor{
+	expectedResult := typings.Tensor{
 		{1, 0, 0},
 		{0, 1, 0},
 	}
@@ -50,11 +51,11 @@ func TestCosSim(t *testing.T) {
 }
 
 func TestSemanticSearch(t *testing.T) {
-	queryEmbeddings := vectors.Tensor{
+	queryEmbeddings := typings.Tensor{
 		{1, 0, 0},
 		{0, 1, 0},
 	}
-	corpusEmbeddings := vectors.Tensor{
+	corpusEmbeddings := typings.Tensor{
 		{1, 0, 0},
 		{0, 1, 0},
 		{0, 0, 1},
@@ -64,7 +65,7 @@ func TestSemanticSearch(t *testing.T) {
 	corpusChunkSize := 2
 	topK := 2
 
-	expectedResult := [][]vectors.SearchResult{
+	expectedResult := [][]typings.SearchResult{
 		{
 			{CorpusID: 0, Score: 1},
 			{CorpusID: 1, Score: 0},
