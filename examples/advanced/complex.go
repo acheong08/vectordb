@@ -6,7 +6,6 @@ import (
 	"github.com/acheong08/semantic-search-go/vectors"
 )
 
-// Just a test function
 func main() {
 	corpus := []string{
 		"Google Chrome",

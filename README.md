@@ -12,11 +12,12 @@ Simple:
 package main
 
 import (
-	ssearch "github.com/acheong08/semantic-search-go"
+	semantic_search "github.com/acheong08/semantic-search-go"
 )
 
 func main() {
-	results, _ := ssearch.SemanticSearch([]string{"I need a web browser"}, []string{"Google Chrome", "Firefox", "Dumpster Fire", "Garbage", "Brave"}, 2)
+	corpus := []string{"Google Chrome", "Firefox", "Dumpster Fire", "Garbage", "Brave"}
+	results, _ := semantic_search.SemanticSearch([]string{"I need a web browser"}, corpus, 2)
 	for _, result := range results[0] {
 		println(corpus[result.CorpusID])
 		println(result.Score)
@@ -34,7 +35,6 @@ import (
 	"github.com/acheong08/semantic-search-go/vectors"
 )
 
-// Just a test function
 func main() {
 	corpus := []string{
 		"Google Chrome",
@@ -68,6 +68,7 @@ func main() {
 		println(result.Score)
 	}
 }
+
 ```
 
 You can store your vectors from `semantic-search-go/vectors` in a database and run `semantic-search-go/rank` as needed rather than encoding every single time.
