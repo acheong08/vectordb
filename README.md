@@ -69,3 +69,5 @@ func main() {
 	}
 }
 ```
+
+You can store your vectors from `semantic-search-go/vectors` in a database and run `semantic-search-go/rank` as needed rather than encoding every single time.
