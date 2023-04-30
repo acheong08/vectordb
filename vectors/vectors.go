@@ -2,6 +2,7 @@ package vectors
 
 import (
 	"context"
+	"os"
 
 	"github.com/nlpodyssey/cybertron/pkg/models/bert"
 	"github.com/nlpodyssey/cybertron/pkg/tasks"
@@ -10,10 +11,19 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func Encode(text string) ([]float64, error) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+var home_dir string
 
-	modelsDir := "models"
+func init() {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	home_dir, _ = os.UserHomeDir()
+	// Create ~/.models directory if it doesn't exist
+	if _, err := os.Stat(home_dir + "/.models"); os.IsNotExist(err) {
+		os.Mkdir(home_dir+"/.models", 0755)
+	}
+}
+
+func Encode(text string) ([]float64, error) {
+	modelsDir := home_dir + "/.models"
 	modelName := "sentence-transformers/all-MiniLM-L6-v2"
 
 	m, err := tasks.Load[textencoding.Interface](&tasks.Config{ModelsDir: modelsDir, ModelName: modelName})
