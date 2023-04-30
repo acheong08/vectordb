@@ -1,4 +1,5 @@
 # semantic-search-go
+Text similarity search for Go
 
 ## Installation
 ```bash
