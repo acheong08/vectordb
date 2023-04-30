@@ -23,6 +23,6 @@ func SemanticSearch(query string, corpus []string, results int) ([]typings.Searc
 	}
 	queryTensor := typings.Tensor{encodedQuery}
 	// Semantic search
-	searchResult := rank.Rank(queryTensor, encodedCorpus, 2)
+	searchResult := rank.Rank(queryTensor, encodedCorpus, results)
 	return searchResult[0], nil
 }
