@@ -12,7 +12,7 @@ import (
 )
 
 func Encode(text string) (float.Slice, error) {
-	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	modelsDir := "models"
 	modelName := "sentence-transformers/all-MiniLM-L6-v2"
