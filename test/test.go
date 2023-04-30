@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/acheong08/semantic-search-go/semantic_search"
+	"github.com/acheong08/semantic-search-go/rank"
 	"github.com/acheong08/semantic-search-go/typings"
 	"github.com/acheong08/semantic-search-go/vectors"
 )
@@ -37,7 +37,7 @@ func main() {
 	// Convert query from []float64 to [][]float64 (tensor)
 	queryTensor := typings.Tensor{encodedQuery}
 	// Semantic search
-	searchResult := semantic_search.SemanticSearch(queryTensor, encodedCorpus, 2)
+	searchResult := rank.Rank(queryTensor, encodedCorpus, 2)
 	// Print results
 	for _, result := range searchResult[0] {
 		println(corpus[result.CorpusID])

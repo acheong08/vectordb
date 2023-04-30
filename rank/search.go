@@ -1,4 +1,4 @@
-package semantic_search
+package rank
 
 import (
 	"container/heap"
@@ -40,7 +40,7 @@ func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 	return cosScores
 }
 
-func SemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typings.SearchResult {
+func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typings.SearchResult {
 	// Defaults
 	queryChunkSize := 1
 	corpusChunkSize := 1
