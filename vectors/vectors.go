@@ -6,12 +6,11 @@ import (
 	"github.com/nlpodyssey/cybertron/pkg/models/bert"
 	"github.com/nlpodyssey/cybertron/pkg/tasks"
 	"github.com/nlpodyssey/cybertron/pkg/tasks/textencoding"
-	"github.com/nlpodyssey/spago/mat/float"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-func Encode(text string) (float.Slice, error) {
+func Encode(text string) ([]float64, error) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	modelsDir := "models"
@@ -25,8 +24,7 @@ func Encode(text string) (float.Slice, error) {
 
 	result, err := m.Encode(context.Background(), text, int(bert.MeanPooling))
 	if err != nil {
-		return nil, err
+		return []float64{}, err
 	}
-	return result.Vector.Data(), nil
-
+	return result.Vector.Data().F64(), nil
 }

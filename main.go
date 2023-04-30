@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/acheong08/semantic-search-go/semantic_search"
 	"github.com/acheong08/semantic-search-go/typings"
 	"github.com/acheong08/semantic-search-go/vectors"
@@ -23,15 +25,17 @@ func main() {
 			panic(err)
 		}
 		// Convert vector from []float64 to [][]float64
-		encodedCorpus[i] = vector.F64()
+		encodedCorpus[i] = vector
 	}
 	query := "Browser"
 	encodedQuery, err := vectors.Encode(query)
 	if err != nil {
 		panic(err)
 	}
+	// Print query
+	fmt.Println(encodedQuery)
 	// Convert query from []float64 to [][]float64 (tensor)
-	queryTensor := typings.Tensor{encodedQuery.F64()}
+	queryTensor := typings.Tensor{encodedQuery}
 	// Semantic search
 	searchResult := semantic_search.SemanticSearch(queryTensor, encodedCorpus, 2)
 	// Print results

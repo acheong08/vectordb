@@ -8,7 +8,7 @@ import (
 	"github.com/acheong08/semantic-search-go/typings"
 )
 
-func DotProduct(a, b []float64) float64 {
+func dotProduct(a, b []float64) float64 {
 	result := 0.0
 	for i := range a {
 		result += a[i] * b[i]
@@ -16,7 +16,7 @@ func DotProduct(a, b []float64) float64 {
 	return result
 }
 
-func Norm(a []float64) float64 {
+func norm(a []float64) float64 {
 	result := 0.0
 	for _, v := range a {
 		result += v * v
@@ -24,16 +24,16 @@ func Norm(a []float64) float64 {
 	return math.Sqrt(result)
 }
 
-func CosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
+func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 	numQueries := len(queryEmbeddings)
 	numCorpus := len(corpusEmbeddings)
 	cosScores := make(typings.Tensor, numQueries)
 
 	for i := 0; i < numQueries; i++ {
 		cosScores[i] = make([]float64, numCorpus)
-		queryNorm := Norm(queryEmbeddings[i])
+		queryNorm := norm(queryEmbeddings[i])
 		for j := 0; j < numCorpus; j++ {
-			cosScores[i][j] = DotProduct(queryEmbeddings[i], corpusEmbeddings[j]) / (queryNorm * Norm(corpusEmbeddings[j]))
+			cosScores[i][j] = dotProduct(queryEmbeddings[i], corpusEmbeddings[j]) / (queryNorm * norm(corpusEmbeddings[j]))
 		}
 	}
 
@@ -59,7 +59,7 @@ func SemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) 
 				corpusEndIdx = len(corpusEmbeddings)
 			}
 
-			cosScores := CosSim(queryEmbeddings[queryStartIdx:queryEndIdx], corpusEmbeddings[corpusStartIdx:corpusEndIdx])
+			cosScores := cosSim(queryEmbeddings[queryStartIdx:queryEndIdx], corpusEmbeddings[corpusStartIdx:corpusEndIdx])
 
 			for queryItr := 0; queryItr < len(cosScores); queryItr++ {
 				pq := &typings.SearchResultHeap{}
