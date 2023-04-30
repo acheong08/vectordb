@@ -1,4 +1,4 @@
-package semantic_search_go
+package semantic_search
 
 import (
 	"container/heap"

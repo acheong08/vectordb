@@ -1,11 +1,11 @@
-package semantic_search_go_test
+package semantic_search_test
 
 import (
 	"encoding/json"
 	"math"
 	"testing"
 
-	vectors "github.com/acheong08/semantic-search-go"
+	"github.com/acheong08/semantic-search-go/semantic_search"
 	"github.com/acheong08/semantic-search-go/typings"
 
 	assert "github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ func TestDotProduct(t *testing.T) {
 	b := []float64{4, 5, 6}
 
 	expectedResult := 32.0
-	actualResult := vectors.DotProduct(a, b)
+	actualResult := semantic_search.DotProduct(a, b)
 
 	assert.Equal(t, expectedResult, actualResult, "Dot product calculation is incorrect")
 }
@@ -25,7 +25,7 @@ func TestNorm(t *testing.T) {
 	a := []float64{1, 2, 3}
 
 	expectedResult := math.Sqrt(14)
-	actualResult := vectors.Norm(a)
+	actualResult := semantic_search.Norm(a)
 
 	assert.Equal(t, expectedResult, actualResult, "Norm calculation is incorrect")
 }
@@ -45,7 +45,7 @@ func TestCosSim(t *testing.T) {
 		{1, 0, 0},
 		{0, 1, 0},
 	}
-	actualResult := vectors.CosSim(queryEmbeddings, corpusEmbeddings)
+	actualResult := semantic_search.CosSim(queryEmbeddings, corpusEmbeddings)
 
 	assert.Equal(t, expectedResult, actualResult, "Cosine similarity calculation is incorrect")
 }
@@ -74,7 +74,7 @@ func TestSemanticSearch(t *testing.T) {
 			{CorpusID: 0, Score: 0},
 		},
 	}
-	actualResult := vectors.SemanticSearch(queryEmbeddings, corpusEmbeddings, queryChunkSize, corpusChunkSize, topK)
+	actualResult := semantic_search.SemanticSearch(queryEmbeddings, corpusEmbeddings, queryChunkSize, corpusChunkSize, topK)
 
 	// Convert both to JSON string
 	expectedJSON, _ := json.Marshal(expectedResult)
