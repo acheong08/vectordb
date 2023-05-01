@@ -15,7 +15,11 @@ var home_dir string
 
 func init() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	home_dir, _ = os.UserHomeDir()
+	var err error
+	home_dir, err = os.UserHomeDir()
+	if err != nil {
+		home_dir = "."
+	}
 	// Create ~/.models directory if it doesn't exist
 	if _, err := os.Stat(home_dir + "/.models"); os.IsNotExist(err) {
 		os.Mkdir(home_dir+"/.models", 0755)
