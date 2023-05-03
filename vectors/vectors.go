@@ -55,6 +55,8 @@ func Encode(text string) ([]float64, error) {
 	return result.Vector.Data().F64(), nil
 }
 
+// This can be modified to use go embed instead of loading from disk
+
 // TextEncoding is a text encoding model.
 type TextEncoding struct {
 	// Model is the model used to answer questions.
