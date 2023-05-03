@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	semantic_search "github.com/acheong08/semantic-search-go"
 )
 
@@ -9,6 +11,6 @@ func main() {
 	results, _ := semantic_search.SemanticSearch([]string{"I need a web browser"}, corpus, 2)
 	for _, result := range results[0] {
 		println(corpus[result.CorpusID])
-		println(result.Score)
+		fmt.Println(result.Score)
 	}
 }
