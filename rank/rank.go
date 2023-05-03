@@ -62,6 +62,11 @@ func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typing
 						heap.Pop(pq)
 						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: score})
 					}
+
+					// Break the loop when topK results have been processed
+					if i == topK-1 {
+						break
+					}
 				}
 
 				queryID := queryStartIdx + queryItr
