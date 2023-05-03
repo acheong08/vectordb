@@ -1,9 +1,13 @@
 package semantic_search_go_test
 
 import (
+	"log"
 	"math/rand"
 	"testing"
 	"time"
+
+	"os"
+	"runtime/pprof"
 
 	search "github.com/acheong08/semantic-search-go"
 	"github.com/acheong08/semantic-search-go/rank"
@@ -27,6 +31,20 @@ func TestRank(t *testing.T) {
 	queryEmbeddings := generateRandomTensor(500, 512)
 	corpusEmbeddings := generateRandomTensor(10000, 512)
 	topK := 10
+
+	// Create a file to store the profiling data
+	f, err := os.Create("rank_cpu.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	// Start profiling
+	err = pprof.StartCPUProfile(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pprof.StopCPUProfile()
 
 	benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings, topK, t)
 }

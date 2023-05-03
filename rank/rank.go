@@ -2,7 +2,6 @@ package rank
 
 import (
 	"container/heap"
-	"math"
 	"sort"
 
 	"github.com/acheong08/semantic-search-go/typings"
@@ -16,14 +15,6 @@ func dotProduct(a, b []float64) float64 {
 	return result
 }
 
-func norm(a []float64) float64 {
-	result := 0.0
-	for _, v := range a {
-		result += v * v
-	}
-	return math.Sqrt(result)
-}
-
 func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 	numQueries := len(queryEmbeddings)
 	numCorpus := len(corpusEmbeddings)
@@ -31,9 +22,8 @@ func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 
 	for i := 0; i < numQueries; i++ {
 		cosScores[i] = make([]float64, numCorpus)
-		queryNorm := norm(queryEmbeddings[i])
 		for j := 0; j < numCorpus; j++ {
-			cosScores[i][j] = dotProduct(queryEmbeddings[i], corpusEmbeddings[j]) / (queryNorm * norm(corpusEmbeddings[j]))
+			cosScores[i][j] = dotProduct(queryEmbeddings[i], corpusEmbeddings[j])
 		}
 	}
 
