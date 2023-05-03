@@ -41,41 +41,26 @@ func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor) typings.Tensor {
 }
 
 func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typings.SearchResult {
-	queryChunkSize := len(queryEmbeddings)
-	corpusChunkSize := len(corpusEmbeddings)
-
-	if corpusChunkSize > 1000 {
-		corpusChunkSize = 1000
-	}
-	if queryChunkSize > 10 {
-		queryChunkSize = 10
-	}
+	const queryChunkSize, corpusChunkSize = 100, 1000
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 
 	for queryStartIdx := 0; queryStartIdx < len(queryEmbeddings); queryStartIdx += queryChunkSize {
 		for corpusStartIdx := 0; corpusStartIdx < len(corpusEmbeddings); corpusStartIdx += corpusChunkSize {
-			queryEndIdx := queryStartIdx + queryChunkSize
-			if queryEndIdx > len(queryEmbeddings) {
-				queryEndIdx = len(queryEmbeddings)
-			}
-
-			corpusEndIdx := corpusStartIdx + corpusChunkSize
-			if corpusEndIdx > len(corpusEmbeddings) {
-				corpusEndIdx = len(corpusEmbeddings)
-			}
+			queryEndIdx := min(queryStartIdx+queryChunkSize, len(queryEmbeddings))
+			corpusEndIdx := min(corpusStartIdx+corpusChunkSize, len(corpusEmbeddings))
 
 			cosScores := cosSim(queryEmbeddings[queryStartIdx:queryEndIdx], corpusEmbeddings[corpusStartIdx:corpusEndIdx])
 
-			for queryItr := 0; queryItr < len(cosScores); queryItr++ {
+			for queryItr, scores := range cosScores {
 				pq := &typings.SearchResultHeap{}
 				heap.Init(pq)
 
-				for i := 0; i < len(cosScores[queryItr]); i++ {
+				for i, score := range scores {
 					if pq.Len() < topK {
-						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: cosScores[queryItr][i]})
-					} else if cosScores[queryItr][i] > pq.Peek().Score {
+						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: score})
+					} else if score > pq.Peek().Score {
 						heap.Pop(pq)
-						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: cosScores[queryItr][i]})
+						heap.Push(pq, typings.SearchResult{CorpusID: i, Score: score})
 					}
 				}
 
@@ -96,4 +81,11 @@ func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typing
 		queriesResultList[idx] = queriesResultList[idx][:topK]
 	}
 	return queriesResultList
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
