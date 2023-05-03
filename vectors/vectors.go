@@ -25,7 +25,7 @@ import (
 var home_dir string
 
 func init() {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	var err error
 	home_dir, err = os.UserHomeDir()
 	if err != nil {
