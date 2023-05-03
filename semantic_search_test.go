@@ -31,7 +31,10 @@ func TestRank(t *testing.T) {
 	queryEmbeddings := generateRandomTensor(500, 512)
 	corpusEmbeddings := generateRandomTensor(10000, 512)
 	topK := 10
+	benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings, topK, t)
+}
 
+func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int, t *testing.T) {
 	// Create a file to store the profiling data
 	f, err := os.Create("rank_cpu.prof")
 	if err != nil {
@@ -44,15 +47,10 @@ func TestRank(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer pprof.StopCPUProfile()
-
-	benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings, topK, t)
-}
-
-func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int, t *testing.T) {
 	startTime := time.Now()
 	rankResults := rank.Rank(queryEmbeddings, corpusEmbeddings, topK)
 	elapsedTime := time.Since(startTime)
+	pprof.StopCPUProfile()
 
 	t.Logf("Elapsed time for ranking %d queries against %d documents: %s", len(queryEmbeddings), len(corpusEmbeddings), elapsedTime)
 
