@@ -2,11 +2,13 @@ package rank_test
 
 import (
 	"math/rand"
+	"reflect"
 	"testing"
 	"time"
 
 	"github.com/acheong08/semantic-search-go/rank"
 	"github.com/acheong08/semantic-search-go/typings"
+	"github.com/acheong08/semantic-search-go/vectors"
 )
 
 func generateRandomTensor(rows, cols int) typings.Tensor {
@@ -59,5 +61,32 @@ func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, t
 				break
 			}
 		}
+	}
+}
+
+func TestResults(t *testing.T) {
+	query, _ := vectors.Encode("Fruit")
+	queryEmbedding := typings.Tensor{query}
+	corpusEmbeddings := make(typings.Tensor, 4)
+	corpusEmbeddings[0], _ = vectors.Encode("Durian")
+	corpusEmbeddings[1], _ = vectors.Encode("Avocado")
+	corpusEmbeddings[2], _ = vectors.Encode("Trash")
+	corpusEmbeddings[3], _ = vectors.Encode("Pizza")
+	topK := 2
+	rankResults := rank.Rank(queryEmbedding, corpusEmbeddings, topK)
+	expected_results := [][]typings.SearchResult{
+		{
+			{
+				CorpusID: 1,
+				Score:    0.5796734128286458,
+			},
+			{
+				CorpusID: 0,
+				Score:    0.28114443800798694,
+			},
+		},
+	}
+	if !reflect.DeepEqual(rankResults, expected_results) {
+		t.Errorf("Expected %v, got %v", expected_results, rankResults)
 	}
 }
