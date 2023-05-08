@@ -93,7 +93,7 @@ func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typing
 	}
 
 	for idx := range queriesResultList {
-		sort.SliceStable(queriesResultList[idx], func(i, j int) bool {
+		sort.Slice(queriesResultList[idx], func(i, j int) bool {
 			return queriesResultList[idx][i].Score > queriesResultList[idx][j].Score
 		})
 		queriesResultList[idx] = queriesResultList[idx][:topK]
