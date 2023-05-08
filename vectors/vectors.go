@@ -44,7 +44,7 @@ func Encode(text string) ([]float64, error) {
 	return result.Vector.Data().F64(), nil
 }
 
-func EncodeMulti(texts []string) (typings.Tensor, error) {
+func EncodeMulti(texts []string) ([][]float64, error) {
 	modelsDir := home_dir + "/.models"
 	modelName := "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -82,5 +82,5 @@ func EncodeMulti(texts []string) (typings.Tensor, error) {
 			vectors[i] = result
 		}
 	}
-	return vectors, nil
+	return vectors.F64(), nil
 }

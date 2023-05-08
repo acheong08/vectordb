@@ -17,3 +17,11 @@ func TestEncoding(t *testing.T) {
 	}
 
 }
+
+func TestEncodeMulti(t *testing.T) {
+	result, _ := vectors.EncodeMulti([]string{"1"})
+	expected, _ := vectors.Encode("1")
+	if reflect.DeepEqual(result[0][0], expected) {
+		t.Errorf("Expected %v,\n\n\n\n got %v", expected, result)
+	}
+}
