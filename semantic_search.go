@@ -6,7 +6,7 @@ import (
 	"github.com/acheong08/semantic-search-go/vectors"
 )
 
-func SemanticSearch(query []string, corpus []string, results int) ([][]typings.SearchResult, error) {
+func SemanticSearch(query []string, corpus []string, results int, sorted bool) ([][]typings.SearchResult, error) {
 	// Encode the corpus
 	var encodedCorpus typings.Tensor = make(typings.Tensor, len(corpus))
 	for i, text := range corpus {
@@ -27,6 +27,6 @@ func SemanticSearch(query []string, corpus []string, results int) ([][]typings.S
 		encodedQuery[i] = vector
 	}
 	// Semantic search
-	searchResult := rank.Rank(encodedQuery, encodedCorpus, results, false)
+	searchResult := rank.Rank(encodedQuery, encodedCorpus, results, sorted)
 	return searchResult, nil
 }
