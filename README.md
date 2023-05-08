@@ -46,14 +46,9 @@ func main() {
 		"Brave",
 	}
 	// Encode the corpus
-	var encodedCorpus typings.Tensor = make(typings.Tensor, len(corpus))
-	for i, text := range corpus {
-		vector, err := vectors.Encode(text)
-		if err != nil {
-			panic(err)
-		}
-		// Convert vector from []float64 to [][]float64
-		encodedCorpus[i] = vector
+	encodedCorpus, err := vectors.EncodeMulti(corpus)
+	if err != nil {
+		panic(err)
 	}
 	query := "What is a good web browser?"
 	encodedQuery, err := vectors.Encode(query)

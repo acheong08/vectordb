@@ -8,23 +8,13 @@ import (
 
 func SemanticSearch(query []string, corpus []string, results int, sorted bool) ([][]typings.SearchResult, error) {
 	// Encode the corpus
-	var encodedCorpus typings.Tensor = make(typings.Tensor, len(corpus))
-	for i, text := range corpus {
-		vector, err := vectors.Encode(text)
-		if err != nil {
-			return [][]typings.SearchResult{}, err
-		}
-		// Convert vector from []float64 to [][]float64
-		encodedCorpus[i] = vector
+	encodedCorpus, err := vectors.EncodeMulti(corpus)
+	if err != nil {
+		return [][]typings.SearchResult{}, err
 	}
-	var encodedQuery typings.Tensor = make(typings.Tensor, len(corpus))
-	for i, text := range query {
-		vector, err := vectors.Encode(text)
-		if err != nil {
-			return [][]typings.SearchResult{}, err
-		}
-		// Convert vector from []float64 to [][]float64
-		encodedQuery[i] = vector
+	encodedQuery, err := vectors.EncodeMulti(query)
+	if err != nil {
+		return [][]typings.SearchResult{}, err
 	}
 	// Semantic search
 	searchResult := rank.Rank(encodedQuery, encodedCorpus, results, sorted)
