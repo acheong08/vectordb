@@ -45,7 +45,7 @@ func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, t
 	// 	log.Fatal(err)
 	// }
 	startTime := time.Now()
-	rankResults := rank.Rank(queryEmbeddings, corpusEmbeddings, topK)
+	rankResults := rank.Rank(queryEmbeddings, corpusEmbeddings, topK, false)
 	elapsedTime := time.Since(startTime)
 	// pprof.StopCPUProfile()
 
@@ -55,12 +55,12 @@ func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, t
 		if len(results) != topK {
 			t.Errorf("Query %d: expected %d results, got %d", i, topK, len(results))
 		}
-		for j := 1; j < len(results); j++ {
-			if results[j-1].Score < results[j].Score {
-				t.Errorf("Query %d: results not sorted in descending order", i)
-				break
-			}
-		}
+		// for j := 1; j < len(results); j++ {
+		// 	if results[j-1].Score < results[j].Score {
+		// 		t.Errorf("Query %d: results not sorted in descending order", i)
+		// 		break
+		// 	}
+		// }
 	}
 }
 
@@ -73,16 +73,16 @@ func TestResults(t *testing.T) {
 	corpusEmbeddings[2], _ = vectors.Encode("Trash")
 	corpusEmbeddings[3], _ = vectors.Encode("Pizza")
 	topK := 2
-	rankResults := rank.Rank(queryEmbedding, corpusEmbeddings, topK)
+	rankResults := rank.Rank(queryEmbedding, corpusEmbeddings, topK, false)
 	expected_results := [][]typings.SearchResult{
 		{
 			{
-				CorpusID: 1,
-				Score:    0.5796734128286458,
-			},
-			{
 				CorpusID: 0,
 				Score:    0.28114443800798694,
+			},
+			{
+				CorpusID: 1,
+				Score:    0.5796734128286458,
 			},
 		},
 	}

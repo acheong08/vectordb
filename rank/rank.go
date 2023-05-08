@@ -64,7 +64,7 @@ func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor, queryStartIdx, cor
 	resultChan <- queriesResultList
 }
 
-func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typings.SearchResult {
+func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int, sorted bool) [][]typings.SearchResult {
 	const queryChunkSize, corpusChunkSize = 100, 1000
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 	resultChan := make(chan [][]typings.SearchResult)
@@ -91,12 +91,13 @@ func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int) [][]typing
 			}
 		}
 	}
-
-	for idx := range queriesResultList {
-		sort.Slice(queriesResultList[idx], func(i, j int) bool {
-			return queriesResultList[idx][i].Score > queriesResultList[idx][j].Score
-		})
-		queriesResultList[idx] = queriesResultList[idx][:topK]
+	if sorted {
+		for idx := range queriesResultList {
+			sort.Slice(queriesResultList[idx], func(i, j int) bool {
+				return queriesResultList[idx][i].Score > queriesResultList[idx][j].Score
+			})
+			queriesResultList[idx] = queriesResultList[idx][:topK]
+		}
 	}
 	return queriesResultList
 }

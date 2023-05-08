@@ -27,6 +27,6 @@ func SemanticSearch(query []string, corpus []string, results int) ([][]typings.S
 		encodedQuery[i] = vector
 	}
 	// Semantic search
-	searchResult := rank.Rank(encodedQuery, encodedCorpus, results)
+	searchResult := rank.Rank(encodedQuery, encodedCorpus, results, false)
 	return searchResult, nil
 }

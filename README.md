@@ -63,7 +63,7 @@ func main() {
 	// Convert query from []float64 to [][]float64 (tensor)
 	queryTensor := typings.Tensor{encodedQuery}
 	// Semantic search
-	searchResult := rank.Rank(queryTensor, encodedCorpus, 2)
+	searchResult := rank.Rank(queryTensor, encodedCorpus, 2, false)
 	// Print results
 	for _, result := range searchResult[0] {
 		println(corpus[result.CorpusID])
