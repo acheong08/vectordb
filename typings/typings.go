@@ -1,17 +1,5 @@
 package typings
 
-type Tensor [][]float64
-
-func (tensor *Tensor) F64() [][]float64 {
-	return (*tensor)
-}
-
-func (tensor *Tensor) F64x(x int) []float64 {
-	return (*tensor)[x]
-}
-
-type Callable func(Tensor, Tensor) Tensor
-
 type SearchResult struct {
 	CorpusID int
 	Score    float64

@@ -11,8 +11,8 @@ import (
 	"github.com/acheong08/semantic-search-go/vectors"
 )
 
-func generateRandomTensor(rows, cols int) typings.Tensor {
-	tensor := make(typings.Tensor, rows)
+func generateRandomTensor(rows, cols int) [][]float64 {
+	tensor := make([][]float64, rows)
 
 	for i := range tensor {
 		tensor[i] = make([]float64, cols)
@@ -31,7 +31,7 @@ func TestRank(t *testing.T) {
 	benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings, topK, t)
 }
 
-func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int, t *testing.T) {
+func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings [][]float64, topK int, t *testing.T) {
 	// Create a file to store the profiling data
 	// f, err := os.Create("rank_cpu.prof")
 	// if err != nil {
@@ -66,8 +66,8 @@ func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings typings.Tensor, t
 
 func TestResults(t *testing.T) {
 	query, _ := vectors.Encode("Fruit")
-	queryEmbedding := typings.Tensor{query}
-	corpusEmbeddings := make(typings.Tensor, 4)
+	queryEmbedding := [][]float64{query}
+	corpusEmbeddings := make([][]float64, 4)
 	corpusEmbeddings[0], _ = vectors.Encode("Durian")
 	corpusEmbeddings[1], _ = vectors.Encode("Avocado")
 	corpusEmbeddings[2], _ = vectors.Encode("Trash")

@@ -24,7 +24,7 @@ func norm(a []float64) float64 {
 	return math.Sqrt(result)
 }
 
-func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor, queryStartIdx, corpusStartIdx int, topK int, resultChan chan<- [][]typings.SearchResult) {
+func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpusStartIdx int, topK int, resultChan chan<- [][]typings.SearchResult) {
 	numQueries := len(queryEmbeddings)
 	numCorpus := len(corpusEmbeddings)
 	queriesResultList := make([][]typings.SearchResult, numQueries)
@@ -64,7 +64,7 @@ func cosSim(queryEmbeddings, corpusEmbeddings typings.Tensor, queryStartIdx, cor
 	resultChan <- queriesResultList
 }
 
-func Rank(queryEmbeddings, corpusEmbeddings typings.Tensor, topK int, sorted bool) [][]typings.SearchResult {
+func Rank(queryEmbeddings, corpusEmbeddings [][]float64, topK int, sorted bool) [][]typings.SearchResult {
 	const queryChunkSize, corpusChunkSize = 100, 1000
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 	resultChan := make(chan [][]typings.SearchResult)

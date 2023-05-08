@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/acheong08/semantic-search-go/rank"
-	"github.com/acheong08/semantic-search-go/typings"
 	"github.com/acheong08/semantic-search-go/vectors"
 )
 
@@ -25,7 +24,7 @@ func main() {
 		panic(err)
 	}
 	// Convert query from []float64 to [][]float64 (tensor)
-	queryTensor := typings.Tensor{encodedQuery}
+	queryTensor := [][]float64{encodedQuery}
 	// Semantic search
 	searchResult := rank.Rank(queryTensor, encodedCorpus, 2, false)
 	// Print results
