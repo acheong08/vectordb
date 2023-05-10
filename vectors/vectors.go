@@ -3,6 +3,7 @@ package vectors
 import (
 	"context"
 	"os"
+	"sync"
 	"path"
 	"path/filepath"
 	"strings"
@@ -55,6 +56,37 @@ func Encode(text string) ([]float64, error) {
 	return result.Vector.Data().F64(), nil
 }
 
+func EncodeMulti(texts []string) ([][]float64, error) {
+	modelsDir := home_dir + "/.models"
+	modelName := "sentence-transformers/all-MiniLM-L6-v2"
+
+	m, err := tasks.Load[textencoding.Interface](&tasks.Config{ModelsDir: modelsDir, ModelName: modelName})
+	if err != nil {
+		return [][]float64{}, err
+	}
+	defer tasks.Finalize(m)
+
+	var resultMutex sync.Mutex
+	var wg sync.WaitGroup
+	results := make([][]float64, len(texts))
+
+	for i, text := range texts {
+		wg.Add(1)
+		go func(i int, text string) {
+			defer wg.Done()
+			result, err := m.Encode(context.Background(), text, int(bert.MeanPooling))
+			if err != nil {
+				log.Fatal().Err(err).Send()
+				return
+			}
+			resultMutex.Lock()
+			defer resultMutex.Unlock()
+			results[i] = result.Vector.Data().F64()
+		}(i, text)
+	}
+
+	wg.Wait()
+	return results, nil
 // This can be modified to use go embed instead of loading from disk
 
 // TextEncoding is a text encoding model.

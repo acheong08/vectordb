@@ -1,9 +1,5 @@
 package typings
 
-type Tensor [][]float64
-
-type Callable func(Tensor, Tensor) Tensor
-
 type SearchResult struct {
 	CorpusID int
 	Score    float64
