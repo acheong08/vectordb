@@ -4,6 +4,8 @@ go 1.20
 
 require (
 	github.com/nlpodyssey/cybertron v0.1.2
+	github.com/nlpodyssey/spago v1.0.1
+	github.com/nlpodyssey/spago/embeddings/store/diskstore v0.0.0-20220801114813-013d65be77fb
 	github.com/rs/zerolog v1.29.1
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 )
@@ -26,8 +28,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/nlpodyssey/gopickle v0.1.0 // indirect
 	github.com/nlpodyssey/gotokenizers v0.2.0 // indirect
-	github.com/nlpodyssey/spago v1.0.1 // indirect
-	github.com/nlpodyssey/spago/embeddings/store/diskstore v0.0.0-20220801114813-013d65be77fb // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 	go.opencensus.io v0.23.0 // indirect
