@@ -29,11 +29,16 @@ func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpus
 	numCorpus := len(corpusEmbeddings)
 	queriesResultList := make([][]typings.SearchResult, numQueries)
 
+	corpus_norms := make([]float64, numCorpus)
+	for i := 0; i < numCorpus; i++ {
+		corpus_norms[i] = norm(corpusEmbeddings[i])
+	}
+
 	for queryItr := 0; queryItr < numQueries; queryItr++ {
 		scores := make([]float64, numCorpus)
 		query_norm := norm(queryEmbeddings[queryItr])
 		for j := 0; j < numCorpus; j++ {
-			scores[j] = dotProduct(queryEmbeddings[queryItr], corpusEmbeddings[j]) / (query_norm * norm(corpusEmbeddings[j]))
+			scores[j] = dotProduct(queryEmbeddings[queryItr], corpusEmbeddings[j]) / (query_norm * corpus_norms[j])
 		}
 
 		pq := &typings.SearchResultHeap{}
@@ -83,11 +88,7 @@ func Rank(queryEmbeddings, corpusEmbeddings [][]float64, topK int, sorted bool) 
 		for j := range queriesResultChunk {
 			index := j + i*queryChunkSize
 			if index < len(queriesResultList) {
-				if queriesResultList[index] == nil {
-					queriesResultList[index] = queriesResultChunk[j]
-				} else {
-					queriesResultList[index] = append(queriesResultList[index], queriesResultChunk[j]...)
-				}
+				queriesResultList[index] = queriesResultChunk[j]
 			}
 		}
 	}
