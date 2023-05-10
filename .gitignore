@@ -25,3 +25,4 @@ models/*
 test/models
 rank_cpu.prof
 simple
+rank/memory.prof
