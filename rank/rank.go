@@ -3,7 +3,8 @@ package rank
 import (
 	"container/heap"
 	"math"
-	"sort"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/acheong08/semantic-search-go/typings"
 )
@@ -94,8 +95,8 @@ func Rank(queryEmbeddings, corpusEmbeddings [][]float64, topK int, sorted bool) 
 	}
 	if sorted {
 		for idx := range queriesResultList {
-			sort.Slice(queriesResultList[idx], func(i, j int) bool {
-				return queriesResultList[idx][i].Score > queriesResultList[idx][j].Score
+			slices.SortFunc(queriesResultList[idx], func(a typings.SearchResult, b typings.SearchResult) bool {
+				return a.Score > b.Score
 			})
 			queriesResultList[idx] = queriesResultList[idx][:topK]
 		}
