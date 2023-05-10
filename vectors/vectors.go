@@ -3,10 +3,10 @@ package vectors
 import (
 	"context"
 	"os"
-	"sync"
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"fmt"
 
@@ -87,6 +87,8 @@ func EncodeMulti(texts []string) ([][]float64, error) {
 
 	wg.Wait()
 	return results, nil
+}
+
 // This can be modified to use go embed instead of loading from disk
 
 // TextEncoding is a text encoding model.
