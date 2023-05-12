@@ -1,14 +1,17 @@
 package bbolt
 
 import (
-	"encoding/json"
+	"encoding/binary"
 	"errors"
+	"fmt"
+	"math"
 
 	"go.etcd.io/bbolt"
 )
 
 type Database struct {
-	db *bbolt.DB
+	db        *bbolt.DB
+	increment int
 }
 
 func New(filePath string) (*Database, error) {
@@ -26,12 +29,19 @@ func (b *Database) Store(embeddings [][]float64) error {
 			return err
 		}
 
-		data, err := json.Marshal(embeddings)
-		if err != nil {
-			return err
+		for _, embedding := range embeddings {
+			// Convert the float64 slice to a byte slice
+			data := make([]byte, len(embedding)*8)
+			for i, v := range embedding {
+				binary.LittleEndian.PutUint64(data[i*8:], math.Float64bits(v))
+			}
+			err = bucket.Put([]byte(fmt.Sprint(b.increment)), data)
+			if err != nil {
+				return err
+			}
+			b.increment++
 		}
-
-		return bucket.Put([]byte("embeddings"), data)
+		return nil
 	})
 }
 
@@ -41,23 +51,58 @@ func (b *Database) Load() ([][]float64, error) {
 	err := b.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte("embeddings"))
 		if bucket == nil {
-			return errors.New("Bucket not found")
+			return errors.New("bucket not found")
 		}
 
-		data := bucket.Get([]byte("embeddings"))
-		return json.Unmarshal(data, &embeddings)
+		return bucket.ForEach(func(k, v []byte) error {
+			var embedding []float64
+			for i := 0; i < len(v); i += 8 {
+				embedding = append(embedding, math.Float64frombits(binary.LittleEndian.Uint64(v[i:])))
+			}
+			embeddings = append(embeddings, embedding)
+			return nil
+		})
 	})
-
 	return embeddings, err
 }
 
 func (b *Database) Add(embedding []float64) error {
-	embeddings, err := b.Load()
-	if err != nil {
-		return err
-	}
+	return b.db.Update(func(tx *bbolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists([]byte("embeddings"))
+		if err != nil {
+			return err
+		}
 
-	embeddings = append(embeddings, embedding)
+		// Convert the float64 slice to a byte slice
+		data := make([]byte, len(embedding)*8)
+		for i, v := range embedding {
+			binary.LittleEndian.PutUint64(data[i*8:], math.Float64bits(v))
+		}
+		err = bucket.Put([]byte(fmt.Sprint(b.increment)), data)
+		if err != nil {
+			return err
+		}
+		b.increment++
+		return nil
+	})
+}
 
-	return b.Store(embeddings)
+func (b *Database) Close() error {
+	return b.db.Close()
+}
+
+func (b *Database) Delete() error {
+	return b.db.Update(func(tx *bbolt.Tx) error {
+		return tx.DeleteBucket([]byte("embeddings"))
+	})
+}
+
+func (b *Database) Remove(key string) error {
+	return b.db.Update(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket([]byte("embeddings"))
+		if bucket == nil {
+			return errors.New("bucket not found")
+		}
+		return bucket.Delete([]byte(key))
+	})
 }
