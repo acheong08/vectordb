@@ -14,4 +14,8 @@ func TestSemanticSearch(t *testing.T) {
 	if results[0][0].CorpusID != 0 {
 		t.Errorf("Expected 1, got %d", results[0][0].CorpusID)
 	}
+	// Check that the results are sorted
+	if results[0][0].Score < results[0][1].Score {
+		t.Errorf("Expected results to be sorted, but they are not")
+	}
 }
