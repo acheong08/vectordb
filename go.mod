@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/nlpodyssey/cybertron v0.1.2
 	github.com/rs/zerolog v1.29.1
-	go.etcd.io/bbolt v1.3.7
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 )
 
