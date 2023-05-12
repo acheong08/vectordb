@@ -1,4 +1,4 @@
-package semantic_search_go_test
+package vectordb_test
 
 import (
 	"testing"

@@ -1,4 +1,4 @@
-package semantic_search_go
+package vectordb
 
 import (
 	"github.com/acheong08/vectordb/rank"

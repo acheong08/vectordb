@@ -1,4 +1,4 @@
-package gob_test
+package database_test
 
 import (
 	"os"
@@ -140,24 +140,5 @@ func TestGetEmbeddings(t *testing.T) {
 	}
 	if embeddings[1][2] != 0.6 {
 		t.Errorf("Error retrieving embedding from database. Got %v, expected 0.6", embeddings[1][2])
-	}
-}
-
-func TestClose(t *testing.T) {
-	db, err := gob.New("test_db.gob")
-	if err != nil {
-		t.Errorf("Error creating new database: %v", err)
-	}
-	defer os.Remove("test_db.gob")
-
-	doc := gob.Document{
-		Text:      "Hello World",
-		Embedding: []float64{0.1, 0.2, 0.3},
-	}
-	db.Add(doc)
-
-	err = db.Close()
-	if err != nil {
-		t.Errorf("Error closing database: %v", err)
 	}
 }

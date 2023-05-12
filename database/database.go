@@ -1,4 +1,4 @@
-package gob
+package database
 
 import (
 	"bytes"
@@ -11,6 +11,16 @@ import (
 const (
 	ErrorFileNotFound = "file not found"
 )
+
+type DatabaseInterface interface {
+	Add(doc Document)
+	Save() error
+	Close() error
+	GetTextByIndex(i int) string
+	GetEmbeddingByIndex(i int) []float64
+	GetEmbeddings() [][]float64
+	GetTexts() []string
+}
 
 type Document struct {
 	Text      string    `json:"text"`
@@ -25,12 +35,21 @@ func (db *Database) Add(doc Document) {
 	db.Documents = append(db.Documents, doc)
 }
 
-func (db *Database) Save() error {
-	return Store(db.filePath, db.Documents)
+func (db *Database) RemoveByIndex(i int) {
+	db.Documents = append(db.Documents[:i], db.Documents[i+1:]...)
 }
 
-func (db *Database) Close() error {
-	return db.Save()
+func (db *Database) RemoveByText(text string) {
+	for i, doc := range db.Documents {
+		if doc.Text == text {
+			db.RemoveByIndex(i)
+			return
+		}
+	}
+}
+
+func (db *Database) Save() error {
+	return Store(db.filePath, db.Documents)
 }
 
 func (db *Database) GetTextByIndex(i int) string {
