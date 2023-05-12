@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/acheong08/semantic-search-go/rank"
-	"github.com/acheong08/semantic-search-go/vectors"
+	"github.com/acheong08/vectordb/rank"
+	"github.com/acheong08/vectordb/vectors"
 )
 
 func main() {

@@ -1,9 +1,9 @@
 package semantic_search_go
 
 import (
-	"github.com/acheong08/semantic-search-go/rank"
-	"github.com/acheong08/semantic-search-go/typings"
-	"github.com/acheong08/semantic-search-go/vectors"
+	"github.com/acheong08/vectordb/rank"
+	"github.com/acheong08/vectordb/typings"
+	"github.com/acheong08/vectordb/vectors"
 )
 
 func SemanticSearch(query []string, corpus []string, results int, sorted bool) ([][]typings.SearchResult, error) {

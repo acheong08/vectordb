@@ -5,7 +5,7 @@ Text similarity search for Go
 
 ## Installation
 ```bash
-go get github.com/acheong08/semantic-search-go
+go get github.com/acheong08/vectordb
 ```
 
 ## Example usage
@@ -14,7 +14,7 @@ Simple:
 package main
 
 import (
-	semantic_search "github.com/acheong08/semantic-search-go"
+	semantic_search "github.com/acheong08/vectordb"
 )
 
 func main() {
@@ -32,9 +32,9 @@ Raw:
 package main
 
 import (
-	"github.com/acheong08/semantic-search-go/rank"
-	"github.com/acheong08/semantic-search-go/typings"
-	"github.com/acheong08/semantic-search-go/vectors"
+	"github.com/acheong08/vectordb/rank"
+	"github.com/acheong08/vectordb/typings"
+	"github.com/acheong08/vectordb/vectors"
 )
 
 func main() {

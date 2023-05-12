@@ -5,7 +5,7 @@ import (
 
 	"reflect"
 
-	"github.com/acheong08/semantic-search-go/vectors"
+	"github.com/acheong08/vectordb/vectors"
 )
 
 func TestEncoding(t *testing.T) {

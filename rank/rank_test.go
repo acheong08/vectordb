@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/acheong08/semantic-search-go/rank"
-	"github.com/acheong08/semantic-search-go/typings"
-	"github.com/acheong08/semantic-search-go/vectors"
+	"github.com/acheong08/vectordb/rank"
+	"github.com/acheong08/vectordb/typings"
+	"github.com/acheong08/vectordb/vectors"
 )
 
 func generateRandomTensor(rows, cols int) [][]float64 {

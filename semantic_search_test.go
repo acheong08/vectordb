@@ -3,7 +3,7 @@ package semantic_search_go_test
 import (
 	"testing"
 
-	search "github.com/acheong08/semantic-search-go"
+	search "github.com/acheong08/vectordb"
 )
 
 func TestSemanticSearch(t *testing.T) {

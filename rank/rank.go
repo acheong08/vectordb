@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/exp/slices"
 
-	"github.com/acheong08/semantic-search-go/typings"
+	"github.com/acheong08/vectordb/typings"
 )
 
 func dotProduct(a, b []float64) float64 {

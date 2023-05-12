@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/acheong08/semantic-search-go/database"
+	"github.com/acheong08/vectordb/database"
 )
 
 func TestStoreAndLoad(t *testing.T) {

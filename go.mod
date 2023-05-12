@@ -1,4 +1,4 @@
-module github.com/acheong08/semantic-search-go
+module github.com/acheong08/vectordb
 
 go 1.20
 
