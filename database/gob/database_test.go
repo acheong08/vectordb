@@ -1,4 +1,4 @@
-package database_test
+package gob_test
 
 import (
 	"math/rand"
@@ -6,16 +6,18 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/acheong08/vectordb/database"
+	"github.com/acheong08/vectordb/database/gob"
 )
 
 func TestStoreAndLoad(t *testing.T) {
+
 	// Create a temporary file for testing
 	tmpFile, err := os.CreateTemp("", "test")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer os.Remove(tmpFile.Name()) // clean up after test
+	database := gob.New(tmpFile.Name())
 
 	// Generate some random embeddings for testing
 	embeddings := make([][]float64, 5)
@@ -27,13 +29,13 @@ func TestStoreAndLoad(t *testing.T) {
 	}
 
 	// Test the Store function
-	err = database.Store(tmpFile.Name(), embeddings)
+	err = database.Store(embeddings)
 	if err != nil {
 		t.Fatalf("Store function returned error: %v", err)
 	}
 
 	// Test the Load function
-	loadedEmbeddings, err := database.Load(tmpFile.Name())
+	loadedEmbeddings, err := database.Load()
 	if err != nil {
 		t.Fatalf("Load function returned error: %v", err)
 	}
