@@ -1,6 +1,8 @@
 package database
 
 type Database interface {
-	Store(filePath string, embeddings [][]float64) error
-	Load(filePath string) ([][]float64, error)
+	New(filePath string) (*Database, error)
+	Store(embeddings [][]float64) error
+	Load() ([][]float64, error)
+	Add(embedding []float64) error
 }

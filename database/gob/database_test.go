@@ -17,7 +17,7 @@ func TestStoreAndLoad(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.Remove(tmpFile.Name()) // clean up after test
-	database := gob.New(tmpFile.Name())
+	database, _ := gob.New(tmpFile.Name())
 
 	// Generate some random embeddings for testing
 	embeddings := make([][]float64, 5)

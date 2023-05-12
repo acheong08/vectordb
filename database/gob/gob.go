@@ -3,21 +3,22 @@ package gob
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"log"
 	"os"
 )
 
-type Gob struct {
+type Database struct {
 	filePath string
 }
 
-func New(filePath string) *Gob {
-	return &Gob{
+func New(filePath string) (*Database, error) {
+	return &Database{
 		filePath: filePath,
-	}
+	}, nil
 }
 
-func (g *Gob) Store(embeddings [][]float64) error {
+func (g *Database) Store(embeddings [][]float64) error {
 
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
@@ -38,7 +39,7 @@ func (g *Gob) Store(embeddings [][]float64) error {
 	return nil
 }
 
-func (g *Gob) Load() ([][]float64, error) {
+func (g *Database) Load() ([][]float64, error) {
 	// Read from a file
 	data, err := os.ReadFile(g.filePath)
 	if err != nil {
@@ -57,4 +58,8 @@ func (g *Gob) Load() ([][]float64, error) {
 	}
 
 	return doc, nil
+}
+
+func Add(embedding []float64) error {
+	return fmt.Errorf("not implemented")
 }
