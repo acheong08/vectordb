@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+type Database interface {
+	Store(filePath string, embeddings [][]float64) error
+	Load(filePath string) ([][]float64, error)
+}
+
 func Store(filePath string, embeddings [][]float64) error {
 
 	var buf bytes.Buffer
