@@ -7,19 +7,12 @@ import (
 	"os"
 )
 
-type Document struct {
-	Embeddings [][]float64
-}
-
 func Store(filePath string, embeddings [][]float64) error {
-	doc := Document{
-		Embeddings: embeddings,
-	}
 
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
 
-	err := enc.Encode(doc)
+	err := enc.Encode(embeddings)
 	if err != nil {
 		log.Println("encode error:", err)
 		return err
@@ -46,12 +39,12 @@ func Load(filePath string) ([][]float64, error) {
 	buf := *bytes.NewBuffer(data)
 	dec := gob.NewDecoder(&buf)
 
-	var doc Document
+	var doc [][]float64
 	err = dec.Decode(&doc)
 	if err != nil {
 		log.Println("decode error:", err)
 		return nil, err
 	}
 
-	return doc.Embeddings, nil
+	return doc, nil
 }
