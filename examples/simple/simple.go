@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	semantic_search "github.com/acheong08/semantic-search-go"
+	semantic_search "github.com/acheong08/vectordb"
 )
 
 func main() {
