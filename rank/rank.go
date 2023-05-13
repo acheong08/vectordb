@@ -9,34 +9,34 @@ import (
 	"github.com/acheong08/vectordb/typings"
 )
 
-func dotProduct(a, b []float64) float64 {
-	result := 0.0
+func dotProduct[T typings.Float](a, b []T) T {
+	result := T(0.0)
 	for i := range a {
 		result += a[i] * b[i]
 	}
 	return result
 }
 
-func norm(a []float64) float64 {
-	result := 0.0
+func norm[T typings.Float](a []T) T {
+	result := T(0.0)
 	for _, v := range a {
 		result += v * v
 	}
-	return math.Sqrt(result)
+	return T(math.Sqrt(float64(result)))
 }
 
-func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpusStartIdx int, topK int, resultChan chan<- [][]typings.SearchResult) {
+func cosSim[T typings.Float](queryEmbeddings, corpusEmbeddings [][]T, queryStartIdx, corpusStartIdx int, topK int, resultChan chan<- [][]typings.SearchResult) {
 	numQueries := len(queryEmbeddings)
 	numCorpus := len(corpusEmbeddings)
 	queriesResultList := make([][]typings.SearchResult, numQueries)
 
-	corpus_norms := make([]float64, numCorpus)
+	corpus_norms := make([]T, numCorpus)
 	for i := 0; i < numCorpus; i++ {
 		corpus_norms[i] = norm(corpusEmbeddings[i])
 	}
 
 	for queryItr := 0; queryItr < numQueries; queryItr++ {
-		scores := make([]float64, numCorpus)
+		scores := make([]T, numCorpus)
 		query_norm := norm(queryEmbeddings[queryItr])
 		for j := 0; j < numCorpus; j++ {
 			scores[j] = dotProduct(queryEmbeddings[queryItr], corpusEmbeddings[j]) / (query_norm * corpus_norms[j])
@@ -47,10 +47,10 @@ func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpus
 
 		for i, score := range scores {
 			if pq.Len() < topK {
-				heap.Push(pq, typings.SearchResult{CorpusID: i, Score: score})
-			} else if score > pq.Peek().Score {
+				heap.Push(pq, typings.SearchResult{CorpusID: i, Score: float32(score)})
+			} else if float32(score) > pq.Peek().Score {
 				heap.Pop(pq)
-				heap.Push(pq, typings.SearchResult{CorpusID: i, Score: score})
+				heap.Push(pq, typings.SearchResult{CorpusID: i, Score: float32(score)})
 			}
 
 			// Break the loop when topK results have been processed
@@ -70,7 +70,7 @@ func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpus
 	resultChan <- queriesResultList
 }
 
-func Rank(queryEmbeddings, corpusEmbeddings [][]float64, topK int, sorted bool) [][]typings.SearchResult {
+func Rank[T typings.Float](queryEmbeddings, corpusEmbeddings [][]T, topK int, sorted bool) [][]typings.SearchResult {
 	const queryChunkSize, corpusChunkSize = 100, 1000
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 	resultChan := make(chan [][]typings.SearchResult)

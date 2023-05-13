@@ -1,8 +1,12 @@
 package typings
 
+type Float interface {
+	float64 | float32
+}
+
 type SearchResult struct {
 	CorpusID int
-	Score    float64
+	Score    float32
 }
 type SearchResultHeap []SearchResult
 
