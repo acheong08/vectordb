@@ -25,8 +25,8 @@ func generateRandomTensor(rows, cols int) [][]float64 {
 }
 
 func TestRank(t *testing.T) {
-	queryEmbeddings := generateRandomTensor(500, 512)
-	corpusEmbeddings := generateRandomTensor(10000, 512)
+	queryEmbeddings := generateRandomTensor(500, 384)
+	corpusEmbeddings := generateRandomTensor(10000, 384)
 	topK := 10
 	benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings, topK, t)
 }

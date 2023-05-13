@@ -1,6 +1,7 @@
 package vectors_test
 
 import (
+	"fmt"
 	"testing"
 
 	"reflect"
@@ -15,6 +16,7 @@ func TestEncoding(t *testing.T) {
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Expected %v, got %v", expected, result)
 	}
+	fmt.Println("Size of result: ", len(result))
 
 }
 
