@@ -26,21 +26,15 @@ func norm(a []float64) float64 {
 	return math.Sqrt(result)
 }
 
-func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpusStartIdx int, topK int, resultChan chan<- [][]typings.SearchResult) {
+func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryNorms, corpusNorms *[]float64, queryStartIdx, corpusStartIdx int, topK int, resultChan chan<- [][]typings.SearchResult) {
 	numQueries := len(queryEmbeddings)
 	numCorpus := len(corpusEmbeddings)
 	queriesResultList := make([][]typings.SearchResult, numQueries)
 
-	corpus_norms := make([]float64, numCorpus)
-	for i := 0; i < numCorpus; i++ {
-		corpus_norms[i] = norm(corpusEmbeddings[i])
-	}
-
 	for queryItr := 0; queryItr < numQueries; queryItr++ {
 		scores := make([]float64, numCorpus)
-		query_norm := norm(queryEmbeddings[queryItr])
 		for j := 0; j < numCorpus; j++ {
-			scores[j] = dotProduct(queryEmbeddings[queryItr], corpusEmbeddings[j]) / (query_norm * corpus_norms[j])
+			scores[j] = dotProduct(queryEmbeddings[queryItr], corpusEmbeddings[j]) / ((*queryNorms)[queryItr] * (*corpusNorms)[j])
 		}
 
 		pq := &typings.SearchResultHeap{}
@@ -49,7 +43,7 @@ func cosSim(queryEmbeddings, corpusEmbeddings [][]float64, queryStartIdx, corpus
 		for i, score := range scores {
 			if pq.Len() < topK {
 				heap.Push(pq, typings.SearchResult{CorpusID: i, Score: float64(score)})
-			} else if float64(score) > pq.Peek().Score {
+			} else if score > pq.Peek().Score {
 				heap.Pop(pq)
 				heap.Push(pq, typings.SearchResult{CorpusID: i, Score: float64(score)})
 			}
@@ -69,6 +63,16 @@ func Rank(queryEmbeddings, corpusEmbeddings [][]float64, topK int, sorted bool) 
 	const queryChunkSize, corpusChunkSize = 100, 1000
 	queriesResultList := make([][]typings.SearchResult, len(queryEmbeddings))
 	resultChan := make(chan [][]typings.SearchResult)
+	numQueries := len(queryEmbeddings)
+	numCorpus := len(corpusEmbeddings)
+	corpus_norms := make([]float64, numCorpus)
+	for i := 0; i < numCorpus; i++ {
+		corpus_norms[i] = norm(corpusEmbeddings[i])
+	}
+	query_norms := make([]float64, numQueries)
+	for i := 0; i < numQueries; i++ {
+		query_norms[i] = norm(queryEmbeddings[i])
+	}
 	var wg sync.WaitGroup
 
 	for queryStartIdx := 0; queryStartIdx < len(queryEmbeddings); queryStartIdx += queryChunkSize {
@@ -79,7 +83,7 @@ func Rank(queryEmbeddings, corpusEmbeddings [][]float64, topK int, sorted bool) 
 			wg.Add(1)
 			go func(queryStartIdx, corpusStartIdx, queryEndIdx, corpusEndIdx int) {
 				defer wg.Done()
-				cosSim(queryEmbeddings[queryStartIdx:queryEndIdx], corpusEmbeddings[corpusStartIdx:corpusEndIdx], queryStartIdx, corpusStartIdx, topK, resultChan)
+				cosSim(queryEmbeddings[queryStartIdx:queryEndIdx], corpusEmbeddings[corpusStartIdx:corpusEndIdx], &query_norms, &corpus_norms, queryStartIdx, corpusStartIdx, topK, resultChan)
 			}(queryStartIdx, corpusStartIdx, queryEndIdx, corpusEndIdx)
 		}
 	}
