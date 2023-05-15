@@ -1,8 +1,11 @@
 package rank_test
 
 import (
+	"log"
 	"math/rand"
+	"os"
 	"reflect"
+	"runtime/pprof"
 	"testing"
 	"time"
 
@@ -33,21 +36,21 @@ func TestRank(t *testing.T) {
 
 func benchmarkSemanticSearch(queryEmbeddings, corpusEmbeddings [][]float64, topK int, t *testing.T) {
 	// Create a file to store the profiling data
-	// f, err := os.Create("rank_cpu.prof")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer f.Close()
+	f, err := os.Create("rank_cpu.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
 
 	// Start profiling
-	// err = pprof.StartCPUProfile(f)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	err = pprof.StartCPUProfile(f)
+	if err != nil {
+		log.Fatal(err)
+	}
 	startTime := time.Now()
 	rankResults := rank.Rank(queryEmbeddings, corpusEmbeddings, topK, false)
 	elapsedTime := time.Since(startTime)
-	// pprof.StopCPUProfile()
+	pprof.StopCPUProfile()
 
 	t.Logf("Elapsed time for ranking %d queries against %d documents: %s", len(queryEmbeddings), len(corpusEmbeddings), elapsedTime)
 
@@ -73,20 +76,31 @@ func TestResults(t *testing.T) {
 	corpusEmbeddings[2], _ = vectors.Encode("Trash")
 	corpusEmbeddings[3], _ = vectors.Encode("Pizza")
 	topK := 2
-	rankResults := rank.Rank(queryEmbedding, corpusEmbeddings, topK, false)
+	rankResults := rank.Rank(queryEmbedding, corpusEmbeddings, topK, true)
 	expected_results := [][]typings.SearchResult{
 		{
 			{
-				CorpusID: 0,
-				Score:    0.28114443800798694,
-			},
-			{
 				CorpusID: 1,
 				Score:    0.5796734128286458,
+			},
+			{
+				CorpusID: 3,
+				Score:    0.459969911227514,
 			},
 		},
 	}
 	if !reflect.DeepEqual(rankResults, expected_results) {
 		t.Errorf("Expected %v, got %v", expected_results, rankResults)
+	}
+	for i, results := range rankResults {
+		if len(results) != topK {
+			t.Errorf("Query %d: expected %d results, got %d", i, topK, len(results))
+		}
+		for j := 1; j < len(results); j++ {
+			if results[j-1].Score < results[j].Score {
+				t.Errorf("Query %d: results not sorted in descending order", i)
+				break
+			}
+		}
 	}
 }
