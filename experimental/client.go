@@ -1,8 +1,6 @@
 package experimental
 
 import (
-	"sort"
-
 	"github.com/acheong08/vectordb/rank"
 	"github.com/acheong08/vectordb/typings"
 	"github.com/acheong08/vectordb/vectors"
@@ -40,28 +38,29 @@ func (c *Client) Query(queries string, topK int) ([]typings.SearchResult, []*Doc
 		return nil, nil, err
 	}
 
-	var pending_units []*Chunk
-	var true_documents []*Document
+	pending_units := make([]*Chunk, 0, topK)
+	true_documents := make([]*Document, 0, topK)
 
 	for _, result := range rank.Rank([][]float64{embeddings}, c.DB.GetEmbeddings(), topK, true)[0] {
-		if c.DB.GetUnitByIndex(result.CorpusID).GetType() == "chunk" {
-			pending_units = append(pending_units, c.DB.GetUnitByIndex(result.CorpusID).(*Chunk))
+		unit := c.DB.GetUnitByIndex(result.CorpusID)
+		if unit.GetType() == "chunk" {
+			pending_units = append(pending_units, unit.(*Chunk))
 		} else {
-			true_documents = append(true_documents, c.DB.GetUnitByIndex(result.CorpusID).(*Document))
+			true_documents = append(true_documents, unit.(*Document))
 		}
 	}
 
 	for len(pending_units) > 0 {
+		next_pending_units := make([]*Chunk, 0, len(pending_units))
 		no_more_chunks := true
-		next_pending_units := []*Chunk{}
 		for _, chunk := range pending_units {
 			for _, result := range rank.Rank([][]float64{embeddings}, chunk.GetDocumentEmbeddings(), topK, true)[0] {
-				if c.DB.GetUnitByIndex(result.CorpusID).GetType() == "chunk" {
-					chunk := c.DB.GetUnitByIndex(result.CorpusID).(*Chunk)
-					next_pending_units = append(next_pending_units, chunk)
+				unit := c.DB.GetUnitByIndex(result.CorpusID)
+				if unit.GetType() == "chunk" {
+					next_pending_units = append(next_pending_units, unit.(*Chunk))
 					no_more_chunks = false
 				} else {
-					true_documents = append(true_documents, c.DB.GetUnitByIndex(result.CorpusID).(*Document))
+					true_documents = append(true_documents, unit.(*Document))
 				}
 			}
 		}
@@ -78,14 +77,8 @@ func (c *Client) Query(queries string, topK int) ([]typings.SearchResult, []*Doc
 
 	ranked_results := rank.Rank([][]float64{embeddings}, true_embeddings, topK, true)[0]
 
-	var searchResults []typings.SearchResult
+	searchResults := make([]typings.SearchResult, 0, len(ranked_results))
 	searchResults = append(searchResults, ranked_results...)
-
-	// Sort the search results
-	sort.Slice(searchResults, func(i, j int) bool {
-		return searchResults[i].Score > searchResults[j].Score
-	})
-
 	return searchResults, true_documents, nil
 }
 
