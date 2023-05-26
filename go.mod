@@ -1,12 +1,11 @@
-module vectordb
+module github.com/acheong08/vectordb
 
 go 1.20
 
 require (
 	github.com/acheong08/cybertron v0.1.3-0.20230526061827-bda4623885f7
-	github.com/acheong08/vectordb v0.0.0-20230526054822-bc7ab4adc0ee
-	github.com/rs/zerolog v1.29.1
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
+	github.com/rs/zerolog v1.27.0
+	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 )
 
 require (
@@ -22,19 +21,20 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/flatbuffers v23.3.3+incompatible // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/nlpodyssey/cybertron v0.1.2 // indirect
 	github.com/nlpodyssey/gopickle v0.1.0 // indirect
 	github.com/nlpodyssey/gotokenizers v0.2.0 // indirect
 	github.com/nlpodyssey/spago v1.0.2-0.20230425104021-8a128747fb24 // indirect
 	github.com/nlpodyssey/spago/embeddings/store/diskstore v0.0.0-20230429163006-8f170651529c // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/stretchr/testify v1.8.3 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/net v0.9.0 // indirect
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/sync v0.2.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )
