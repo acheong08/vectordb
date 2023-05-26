@@ -7,14 +7,22 @@ import (
 )
 
 func SemanticSearch(query []string, corpus []string, results int, sorted bool) ([][]typings.SearchResult, error) {
-	encodedCorpus, err := vectors.EncodeMulti(corpus)
-	if err != nil {
-		return [][]typings.SearchResult{}, err
+	var encodedCorpus [][]float64 = make([][]float64, len(corpus))
+	var err error
+	for i, v := range corpus {
+		encodedCorpus[i], err = vectors.Encode(v)
+		if err != nil {
+			return [][]typings.SearchResult{}, err
+		}
 	}
-	encodedQuery, err := vectors.EncodeMulti(query)
-	if err != nil {
-		return [][]typings.SearchResult{}, err
+	var encodedQuery [][]float64 = make([][]float64, len(query))
+	for i, v := range query {
+		encodedQuery[i], err = vectors.Encode(v)
+		if err != nil {
+			return [][]typings.SearchResult{}, err
+		}
 	}
+
 	// Semantic search
 	searchResult := rank.Rank(encodedQuery, encodedCorpus, results, sorted)
 	return searchResult, nil
