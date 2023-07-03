@@ -13,9 +13,14 @@ import (
 )
 
 var home_dir string
+var defaultModelName string
 
 func init() {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	defaultModelName = os.Getenv("VECTOR_ENCODER_MODEL")
+	if defaultModelName == "" {
+		defaultModelName = "sentence-transformers/distiluse-base-multilingual-cased-v2"
+	}
+	zerolog.SetGlobalLevel(zerolog.FatalLevel)
 	var err error
 	home_dir, err = os.UserHomeDir()
 	if err != nil {
@@ -29,9 +34,8 @@ func init() {
 
 func Encode(text string) ([]float64, error) {
 	modelsDir := home_dir + "/.models"
-	modelName := "sentence-transformers/all-MiniLM-L6-v2"
 
-	m, err := tasks.Load[textencoding.Interface](&tasks.Config{ModelsDir: modelsDir, ModelName: modelName})
+	m, err := tasks.Load[textencoding.Interface](&tasks.Config{ModelsDir: modelsDir, ModelName: defaultModelName})
 	if err != nil {
 		log.Fatal().Err(err).Send()
 	}
@@ -46,9 +50,8 @@ func Encode(text string) ([]float64, error) {
 
 func EncodeMulti(texts []string) ([][]float64, error) {
 	modelsDir := home_dir + "/.models"
-	modelName := "sentence-transformers/all-MiniLM-L6-v2"
 
-	m, err := tasks.Load[textencoding.Interface](&tasks.Config{ModelsDir: modelsDir, ModelName: modelName})
+	m, err := tasks.Load[textencoding.Interface](&tasks.Config{ModelsDir: modelsDir, ModelName: defaultModelName})
 	if err != nil {
 		return [][]float64{}, err
 	}

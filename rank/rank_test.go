@@ -4,13 +4,11 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"reflect"
 	"runtime/pprof"
 	"testing"
 	"time"
 
 	"github.com/acheong08/vectordb/rank"
-	"github.com/acheong08/vectordb/typings"
 	"github.com/acheong08/vectordb/vectors"
 )
 
@@ -77,20 +75,11 @@ func TestResults(t *testing.T) {
 	corpusEmbeddings[3], _ = vectors.Encode("Pizza")
 	topK := 2
 	rankResults := rank.Rank(queryEmbedding, corpusEmbeddings, topK, true)
-	expected_results := [][]typings.SearchResult{
-		{
-			{
-				CorpusID: 1,
-				Score:    0.5796734128286458,
-			},
-			{
-				CorpusID: 3,
-				Score:    0.459969911227514,
-			},
-		},
+	if rankResults[0][0].CorpusID != 0 {
+		t.Errorf("Expected 0, got %d", rankResults[0][0].CorpusID)
 	}
-	if !reflect.DeepEqual(rankResults, expected_results) {
-		t.Errorf("Expected %v, got %v", expected_results, rankResults)
+	if rankResults[0][1].CorpusID != 1 {
+		t.Errorf("Expected 1, got %d", rankResults[0][1].CorpusID)
 	}
 	for i, results := range rankResults {
 		if len(results) != topK {
